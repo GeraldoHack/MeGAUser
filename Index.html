@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeGA - Usuário</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .gradient-bg { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); }
+        .gradient-header { background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.2); }
+        .hidden { display: none; }
+        .flex { display: flex; }
+        .btn-loading { opacity: 0.7; pointer-events: none; }
+        .daily-card { border-left: 4px solid #3B82F6; background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%); }
+        .monthly-card { border-left: 4px solid #10B981; background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%); }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div id="app">
+        <!-- Loading -->
+        <div id="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+            <div class="text-center">
+                <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p class="text-gray-600">Carregando MeGA...</p>
+            </div>
+        </div>
+
+        <!-- Auth Screen -->
+        <div id="auth-screen" class="min-h-screen hidden">
+            <div class="container mx-auto px-4 py-8">
+                <div class="text-center mb-8">
+                    <div class="w-24 h-24 gradient-bg rounded-3xl mx-auto mb-6 flex items-center justify-center pulse-animation shadow-2xl">
+                        <span class="text-white font-bold text-3xl">MG</span>
+                    </div>
+                    <h1 class="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">MeGA</h1>
+                    <p class="text-gray-600 text-lg">Net Price Lite</p>
+                </div>
+
+                <!-- Login Form -->
+                <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6 border border-blue-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Entrar no MeGA</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">📧 Email</label>
+                            <input type="email" id="login-email" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="seu@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">🔒 Senha</label>
+                            <input type="password" id="login-password" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Sua senha">
+                        </div>
+                        <button onclick="login()" id="login-btn" class="w-full gradient-bg text-white py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            🚀 Entrar no MeGA
+                        </button>
+                    </div>
+                    <p class="text-center mt-6 text-gray-600">Não tem conta? <button onclick="showRegister()" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Criar conta agora</button></p>
+                </div>
+
+                <!-- Register Form -->
+                <div id="register-form" class="bg-white rounded-3xl shadow-2xl p-8 hidden border border-blue-100">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Junte-se ao MeGA</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">👤 Nome Completo</label>
+                            <input type="text" id="register-name" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Seu nome completo">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">📧 Email</label>
+                            <input type="email" id="register-email" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="seu@email.com">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">🔒 Senha</label>
+                            <input type="password" id="register-password" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Mínimo 6 caracteres">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">📱 Número Vodacom</label>
+                            <div class="flex">
+                                <span class="inline-flex items-center px-4 rounded-l-2xl border-2 border-r-0 border-gray-200 bg-blue-50 text-blue-600 font-semibold">+258</span>
+                                <input type="tel" id="register-phone" class="flex-1 rounded-r-2xl px-4 py-4 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="84/85xxxxxxx">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">📍 Província</label>
+                            <select id="register-province" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                <option value="">Selecione sua província</option>
+                                <option>Maputo Cidade</option>
+                                <option>Maputo Província</option>
+                                <option>Gaza</option>
+                                <option>Inhambane</option>
+                                <option>Sofala</option>
+                                <option>Manica</option>
+                                <option>Tete</option>
+                                <option>Zambézia</option>
+                                <option>Nampula</option>
+                                <option>Cabo Delgado</option>
+                                <option>Niassa</option>
+                            </select>
+                        </div>
+                        <button onclick="register()" id="register-btn" class="w-full gradient-bg text-white py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            ✨ Criar Minha Conta
+                        </button>
+                    </div>
+                    <p class="text-center mt-6 text-gray-600">Já tem conta? <button onclick="showLogin()" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Fazer login</button></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App -->
+        <div id="main-app" class="min-h-screen hidden">
+            <!-- Header -->
+            <div class="gradient-header shadow-2xl border-b border-blue-300 sticky top-0 z-40">
+                <div class="px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                            <span class="text-white font-bold text-xl">MG</span>
+                        </div>
+                        <div>
+                            <h1 class="font-bold text-white text-xl">MeGA</h1>
+                            <p class="text-xs text-blue-100">Net Price Lite</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="logout()" class="p-3 bg-white/20 rounded-xl text-white hover:bg-white/30 transition-all backdrop-blur-sm">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 pb-24">
+                <!-- Welcome Card -->
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl p-6 shadow-2xl mb-8 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="font-bold text-2xl mb-2" id="welcome-name">Olá, Utilizador!</h2>
+                            <p class="text-blue-100 flex items-center">
+                                <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i>
+                                <span id="user-province">Província</span> • <span id="user-phone">Número</span>
+                            </p>
+                        </div>
+                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                            <i data-lucide="user" class="w-8 h-8 text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Packages -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                        <i data-lucide="package" class="w-6 h-6 mr-3 text-blue-600"></i>
+                        Pacotes Disponíveis
+                    </h3>
+                    
+                    <!-- Diário Section -->
+                    <div class="mb-8">
+                        <h4 class="font-semibold text-blue-700 mb-4 flex items-center text-lg">
+                            <i data-lucide="sun" class="w-5 h-5 mr-3"></i>
+                            📅 Pacotes Diários
+                        </h4>
+                        <div class="grid grid-cols-1 gap-6" id="daily-packages-container">
+                            <div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl">
+                                <i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
+                                <p>Carregando pacotes diários...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensal Section -->
+                    <div>
+                        <h4 class="font-semibold text-green-600 mb-4 flex items-center text-lg">
+                            <i data-lucide="calendar" class="w-5 h-5 mr-3"></i>
+                            📊 Pacotes Mensais
+                        </h4>
+                        <div class="grid grid-cols-1 gap-6" id="monthly-packages-container">
+                            <div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl">
+                                <i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
+                                <p>Carregando pacotes mensais...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="bg-white rounded-3xl p-6 shadow-2xl border border-blue-100 mb-6">
+                    <h4 class="font-bold text-gray-900 mb-4 flex items-center text-lg">
+                        <i data-lucide="credit-card" class="w-6 h-6 mr-3 text-blue-600"></i>
+                        💳 Formas de Pagamento
+                    </h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-4 text-center shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer">
+                            <div class="font-bold text-white text-lg">M-Pesa</div>
+                            <div class="text-green-100 text-sm">Pagamento móvel</div>
+                        </div>
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-4 text-center shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer">
+                            <div class="font-bold text-white text-lg">e-Mola</div>
+                            <div class="text-blue-100 text-sm">Carteira digital</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-blue-200 px-6 py-4 shadow-2xl rounded-t-3xl">
+                <div class="flex justify-around">
+                    <button class="flex flex-col items-center text-blue-600 font-semibold">
+                        <i data-lucide="package" class="w-7 h-7 mb-2"></i>
+                        <span class="text-sm">Pacotes</span>
+                    </button>
+                    <button onclick="openSupport()" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors">
+                        <i data-lucide="message-circle" class="w-7 h-7 mb-2"></i>
+                        <span class="text-sm">Suporte</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "-AIzaSyCdjfx7WR38y5JuKJi7iPa9BngZkjrLH4Q",
+            authDomain: "vpnm-27bdc.firebaseapp.com",
+            projectId: "vpnm-27bdc",
+            storageBucket: "vpnm-27bdc.appspot.com",
+            messagingSenderId: "549652754327",
+            appId: "1:549652754327:web:606bc13e134a5034579ed2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentUser = null;
+        const YOUR_WHATSAPP_NUMBER = "258855361571";
+
+        function initApp() {
+            lucide.createIcons();
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    loadUserData();
+                } else {
+                    showAuthScreen();
+                }
+                hideLoading();
+            });
+        }
+
+        function showAuthScreen() {
+            document.getElementById('auth-screen').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('hidden');
+            showLogin();
+        }
+
+        function showLogin() {
+            document.getElementById('register-form').classList.add('hidden');
+            document.querySelector('#auth-screen > div > div:last-child').classList.remove('hidden');
+        }
+
+        function showRegister() {
+            document.querySelector('#auth-screen > div > div:last-child').classList.add('hidden');
+            document.getElementById('register-form').classList.remove('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            updateUserInfo();
+            loadPackages();
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.add('hidden');
+        }
+
+        function setButtonLoading(buttonId, isLoading) {
+            const button = document.getElementById(buttonId);
+            if (isLoading) {
+                button.classList.add('btn-loading');
+                button.innerHTML = '<div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>';
+            } else {
+                button.classList.remove('btn-loading');
+                if (buttonId === 'login-btn') {
+                    button.textContent = '🚀 Entrar no MeGA';
+                } else {
+                    button.textContent = '✨ Criar Minha Conta';
+                }
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!email || !password) {
+                alert('Por favor, preencha todos os campos');
+                return;
+            }
+
+            setButtonLoading('login-btn', true);
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                setButtonLoading('login-btn', false);
+                alert('Erro ao entrar: ' + error.message);
+            }
+        }
+
+        async function register() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const phone = document.getElementById('register-phone').value;
+            const province = document.getElementById('register-province').value;
+            
+            if (!name || !email || !password || !phone || !province) {
+                alert('Por favor, preencha todos os campos');
+                return;
+            }
+
+            if (!phone.startsWith('84') && !phone.startsWith('85')) {
+                alert('Apenas números Vodacom (84/85) são aceitos');
+                return;
+            }
+
+            setButtonLoading('register-btn', true);
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await db.collection('users').doc(userCredential.user.uid).set({
+                    name: name,
+                    email: email,
+                    phone: '+258' + phone,
+                    province: province,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    role: 'user',
+                    blocked: false
+                });
+            } catch (error) {
+                setButtonLoading('register-btn', false);
+                alert('Erro ao criar conta: ' + error.message);
+            }
+        }
+
+        async function loadUserData() {
+            try {
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    if (userData.blocked) {
+                        await auth.signOut();
+                        alert('Sua conta foi bloqueada. Entre em contato com o suporte.');
+                        return;
+                    }
+                    
+                    currentUser.data = userData;
+                    showMainApp();
+                } else {
+                    await auth.signOut();
+                    alert('Dados do usuário não encontrados. Por favor, faça login novamente.');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados do usuário:', error);
+                await auth.signOut();
+            }
+        }
+
+        function updateUserInfo() {
+            if (currentUser && currentUser.data) {
+                document.getElementById('welcome-name').textContent = `Olá, ${currentUser.data.name.split(' ')[0]}!`;
+                document.getElementById('user-province').textContent = currentUser.data.province;
+                document.getElementById('user-phone').textContent = currentUser.data.phone;
+            }
+        }
+
+        function loadPackages() {
+            db.collection('packages').where('active', '==', true)
+                .onSnapshot((snapshot) => {
+                    const dailyContainer = document.getElementById('daily-packages-container');
+                    const monthlyContainer = document.getElementById('monthly-packages-container');
+                    
+                    dailyContainer.innerHTML = '';
+                    monthlyContainer.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        dailyContainer.innerHTML = '<div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i><p>Nenhum pacote diário disponível</p></div>';
+                        monthlyContainer.innerHTML = '<div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i><p>Nenhum pacote mensal disponível</p></div>';
+                        return;
+                    }
+                    
+                    let hasDaily = false;
+                    let hasMonthly = false;
+                    
+                    snapshot.forEach((doc) => {
+                        const pkg = doc.data();
+                        const packageHTML = `
+                            <div class="bg-white rounded-3xl p-6 shadow-2xl border border-gray-200 card-hover ${pkg.category === 'Diário' ? 'daily-card' : 'monthly-card'}">
+                                <div class="text-center mb-6">
+                                    <div class="text-4xl mb-3">${pkg.icon || '📦'}</div>
+                                    <h3 class="font-bold text-gray-900 text-xl">${pkg.category}: ${pkg.data}</h3>
+                                    <p class="text-gray-600">${pkg.period}</p>
+                                </div>
+                                <div class="text-center mb-6">
+                                    <span class="text-3xl font-bold text-gray-900">${pkg.price}</span>
+                                    <span class="text-gray-600 ml-2">MT</span>
+                                </div>
+                                <button onclick="buyPackage('${doc.id}', '${pkg.category}', ${pkg.price}, '${pkg.data}', '${pkg.period}')" 
+                                    class="w-full gradient-bg text-white py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                    🛒 Comprar Agora
+                                </button>
+                            </div>
+                        `;
+                        
+                        if (pkg.category === 'Diário') {
+                            dailyContainer.innerHTML += packageHTML;
+                            hasDaily = true;
+                        } else if (pkg.category === 'Mensal') {
+                            monthlyContainer.innerHTML += packageHTML;
+                            hasMonthly = true;
+                        }
+                    });
+                    
+                    if (!hasDaily) {
+                        dailyContainer.innerHTML = '<div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i><p>Nenhum pacote diário disponível</p></div>';
+                    }
+                    
+                    if (!hasMonthly) {
+                        monthlyContainer.innerHTML = '<div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i><p>Nenhum pacote mensal disponível</p></div>';
+                    }
+                    
+                    lucide.createIcons();
+                }, (error) => {
+                    console.error('Erro ao carregar pacotes:', error);
+                });
+        }
+
+        async function buyPackage(packageId, packageCategory, packagePrice, packageData, packagePeriod) {
+            if (!currentUser || !currentUser.data) {
+                alert('Por favor, faça login primeiro');
+                return;
+            }
+            
+            try {
+                await db.collection('packages').doc(packageId).update({
+                    clicks: firebase.firestore.FieldValue.increment(1),
+                    lastClicked: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                const message = `🛒 *COMPRA NO MeGA*%0A%0A` +
+                               `📦 *Pacote:* ${packageCategory} - ${packageData}%0A` +
+                               `⏰ *Validade:* ${packagePeriod}%0A` +
+                               `💰 *Preço:* ${packagePrice} MT%0A%0A` +
+                               `👤 *Nome:* ${currentUser.data.name}%0A` +
+                               `📱 *Número:* ${currentUser.data.phone}%0A` +
+                               `📍 *Província:* ${currentUser.data.province}%0A%0A` +
+                               `✅ *Confirmar compra*`;
+                
+                const whatsappUrl = `https://wa.me/${YOUR_WHATSAPP_NUMBER}?text=${message}`;
+                window.open(whatsappUrl, '_blank');
+                
+            } catch (error) {
+                console.error('Erro ao registrar clique:', error);
+                alert('Erro ao processar sua solicitação. Tente novamente.');
+            }
+        }
+
+        function openSupport() {
+            if (!currentUser || !currentUser.data) {
+                alert('Por favor, faça login primeiro');
+                return;
+            }
+            
+            const message = `🆘 *SUPORTE TÉCNICO DO MeGA*%0A%0A` +
+                           `👤 *Nome:* ${currentUser.data.name}%0A` +
+                           `📱 *Número:* ${currentUser.data.phone}%0A` +
+                           `📍 *Província:* ${currentUser.data.province}%0A%0A` +
+                           `❓ *Descreva seu problema:*`;
+            
+            const whatsappUrl = `https://wa.me/${YOUR_WHATSAPP_NUMBER}?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        async function logout() {
+            try {
+                await auth.signOut();
+            } catch (error) {
+                alert('Erro ao sair: ' + error.message);
+            }
+        }
+
+        window.addEventListener('load', initApp);
+    </script>
+</body>
+</html>
