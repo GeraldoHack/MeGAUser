@@ -20,17 +20,33 @@
         .daily-card { border-left: 4px solid #3B82F6; background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%); }
         .monthly-card { border-left: 4px solid #10B981; background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%); }
         .pulse-animation { animation: pulse 2s infinite; }
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        /* Melhorias para mobile */
+        @media (max-width: 640px) {
+            .mobile-padding { padding: 1rem; }
+            .mobile-text { font-size: 0.875rem; }
+            .mobile-btn { padding: 1rem; font-size: 1rem; }
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <div id="app">
         <!-- Loading -->
-        <div id="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50">
+        <div id="loading" class="fixed inset-0 bg-white flex items-center justify-center z-50 fade-in">
             <div class="text-center">
                 <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                 <p class="text-gray-600">Carregando MeGA...</p>
@@ -38,61 +54,61 @@
         </div>
 
         <!-- Auth Screen -->
-        <div id="auth-screen" class="min-h-screen hidden">
-            <div class="container mx-auto px-4 py-8">
+        <div id="auth-screen" class="min-h-screen hidden fade-in">
+            <div class="container mx-auto px-4 py-8 mobile-padding">
                 <div class="text-center mb-8">
-                    <div class="w-24 h-24 gradient-bg rounded-3xl mx-auto mb-6 flex items-center justify-center pulse-animation shadow-2xl">
-                        <span class="text-white font-bold text-3xl">MG</span>
+                    <div class="w-20 h-20 md:w-24 md:h-24 gradient-bg rounded-3xl mx-auto mb-4 md:mb-6 flex items-center justify-center pulse-animation shadow-2xl">
+                        <span class="text-white font-bold text-2xl md:text-3xl">MG</span>
                     </div>
-                    <h1 class="text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">MeGA</h1>
-                    <p class="text-gray-600 text-lg">Net Price Lite</p>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">MeGA</h1>
+                    <p class="text-gray-600 text-base md:text-lg">Net Price Lite</p>
                 </div>
 
                 <!-- Login Form -->
-                <div class="bg-white rounded-3xl shadow-2xl p-8 mb-6 border border-blue-100">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Entrar no MeGA</h2>
-                    <div class="space-y-6">
+                <div id="login-form" class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 mb-6 border border-blue-100 slide-in">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 text-center">Entrar no MeGA</h2>
+                    <div class="space-y-4 md:space-y-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">📧 Email</label>
-                            <input type="email" id="login-email" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="seu@email.com">
+                            <label class="block text-sm font-medium text-gray-700 mb-2 md:mb-3">📧 Email</label>
+                            <input type="email" id="login-email" class="w-full px-4 py-3 md:py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mobile-text" placeholder="seu@email.com" value="teste@teste.com">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">🔒 Senha</label>
-                            <input type="password" id="login-password" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Sua senha">
+                            <label class="block text-sm font-medium text-gray-700 mb-2 md:mb-3">🔒 Senha</label>
+                            <input type="password" id="login-password" class="w-full px-4 py-3 md:py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mobile-text" placeholder="Sua senha" value="123456">
                         </div>
-                        <button onclick="login()" id="login-btn" class="w-full gradient-bg text-white py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        <button onclick="login()" id="login-btn" class="w-full gradient-bg text-white py-3 md:py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-base md:text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 mobile-btn">
                             🚀 Entrar no MeGA
                         </button>
                     </div>
-                    <p class="text-center mt-6 text-gray-600">Não tem conta? <button onclick="showRegister()" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Criar conta agora</button></p>
+                    <p class="text-center mt-4 md:mt-6 text-gray-600 mobile-text">Não tem conta? <button onclick="showRegister()" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Criar conta agora</button></p>
                 </div>
 
                 <!-- Register Form -->
-                <div id="register-form" class="bg-white rounded-3xl shadow-2xl p-8 hidden border border-blue-100">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Junte-se ao MeGA</h2>
-                    <div class="space-y-6">
+                <div id="register-form" class="bg-white rounded-3xl shadow-2xl p-6 md:p-8 hidden border border-blue-100 slide-in">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 text-center">Junte-se ao MeGA</h2>
+                    <div class="space-y-4 md:space-y-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">👤 Nome Completo</label>
-                            <input type="text" id="register-name" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Seu nome completo">
+                            <label class="block text-sm font-medium text-gray-700 mb-2 md:mb-3">👤 Nome Completo</label>
+                            <input type="text" id="register-name" class="w-full px-4 py-3 md:py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mobile-text" placeholder="Seu nome completo">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">📧 Email</label>
-                            <input type="email" id="register-email" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="seu@email.com">
+                            <label class="block text-sm font-medium text-gray-700 mb-2 md:mb-3">📧 Email</label>
+                            <input type="email" id="register-email" class="w-full px-4 py-3 md:py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mobile-text" placeholder="seu@email.com">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">🔒 Senha</label>
-                            <input type="password" id="register-password" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="Mínimo 6 caracteres">
+                            <label class="block text-sm font-medium text-gray-700 mb-2 md:mb-3">🔒 Senha</label>
+                            <input type="password" id="register-password" class="w-full px-4 py-3 md:py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mobile-text" placeholder="Mínimo 6 caracteres">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">📱 Número Vodacom</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2 md:mb-3">📱 Número Vodacom</label>
                             <div class="flex">
-                                <span class="inline-flex items-center px-4 rounded-l-2xl border-2 border-r-0 border-gray-200 bg-blue-50 text-blue-600 font-semibold">+258</span>
-                                <input type="tel" id="register-phone" class="flex-1 rounded-r-2xl px-4 py-4 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all" placeholder="84/85xxxxxxx">
+                                <span class="inline-flex items-center px-3 md:px-4 rounded-l-2xl border-2 border-r-0 border-gray-200 bg-blue-50 text-blue-600 font-semibold text-sm md:text-base">+258</span>
+                                <input type="tel" id="register-phone" class="flex-1 rounded-r-2xl px-3 md:px-4 py-3 md:py-4 border-2 border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mobile-text" placeholder="84/85xxxxxxx">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">📍 Província</label>
-                            <select id="register-province" class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                            <label class="block text-sm font-medium text-gray-700 mb-2 md:mb-3">📍 Província</label>
+                            <select id="register-province" class="w-full px-4 py-3 md:py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all mobile-text">
                                 <option value="">Selecione sua província</option>
                                 <option>Maputo Cidade</option>
                                 <option>Maputo Província</option>
@@ -107,120 +123,120 @@
                                 <option>Niassa</option>
                             </select>
                         </div>
-                        <button onclick="register()" id="register-btn" class="w-full gradient-bg text-white py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        <button onclick="register()" id="register-btn" class="w-full gradient-bg text-white py-3 md:py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-base md:text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 mobile-btn">
                             ✨ Criar Minha Conta
                         </button>
                     </div>
-                    <p class="text-center mt-6 text-gray-600">Já tem conta? <button onclick="showLogin()" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Fazer login</button></p>
+                    <p class="text-center mt-4 md:mt-6 text-gray-600 mobile-text">Já tem conta? <button onclick="showLogin()" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">Fazer login</button></p>
                 </div>
             </div>
         </div>
 
         <!-- Main App -->
-        <div id="main-app" class="min-h-screen hidden">
+        <div id="main-app" class="min-h-screen hidden fade-in">
             <!-- Header -->
             <div class="gradient-header shadow-2xl border-b border-blue-300 sticky top-0 z-40">
-                <div class="px-6 py-4 flex items-center justify-between">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                            <span class="text-white font-bold text-xl">MG</span>
+                <div class="px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-3 md:space-x-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                            <span class="text-white font-bold text-lg md:text-xl">MG</span>
                         </div>
                         <div>
-                            <h1 class="font-bold text-white text-xl">MeGA</h1>
+                            <h1 class="font-bold text-white text-lg md:text-xl">MeGA</h1>
                             <p class="text-xs text-blue-100">Net Price Lite</p>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <button onclick="logout()" class="p-3 bg-white/20 rounded-xl text-white hover:bg-white/30 transition-all backdrop-blur-sm">
-                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                    <div class="flex items-center space-x-3 md:space-x-4">
+                        <button onclick="logout()" class="p-2 md:p-3 bg-white/20 rounded-xl text-white hover:bg-white/30 transition-all backdrop-blur-sm">
+                            <i data-lucide="log-out" class="w-4 h-4 md:w-5 md:h-5"></i>
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Content -->
-            <div class="p-6 pb-24">
+            <div class="p-4 md:p-6 pb-20 md:pb-24">
                 <!-- Welcome Card -->
-                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl p-6 shadow-2xl mb-8 text-white">
+                <div class="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-2xl mb-6 md:mb-8 text-white slide-in">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h2 class="font-bold text-2xl mb-2" id="welcome-name">Olá, Utilizador!</h2>
-                            <p class="text-blue-100 flex items-center">
-                                <i data-lucide="map-pin" class="w-4 h-4 mr-2"></i>
+                            <h2 class="font-bold text-xl md:text-2xl mb-1 md:mb-2" id="welcome-name">Olá, Utilizador!</h2>
+                            <p class="text-blue-100 flex items-center text-sm md:text-base">
+                                <i data-lucide="map-pin" class="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2"></i>
                                 <span id="user-province">Província</span> • <span id="user-phone">Número</span>
                             </p>
                         </div>
-                        <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                            <i data-lucide="user" class="w-8 h-8 text-white"></i>
+                        <div class="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                            <i data-lucide="user" class="w-5 h-5 md:w-8 md:h-8 text-white"></i>
                         </div>
                     </div>
                 </div>
 
                 <!-- Packages -->
-                <div class="mb-8">
-                    <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
-                        <i data-lucide="package" class="w-6 h-6 mr-3 text-blue-600"></i>
+                <div class="mb-6 md:mb-8">
+                    <h3 class="text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center">
+                        <i data-lucide="package" class="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3 text-blue-600"></i>
                         Pacotes Disponíveis
                     </h3>
                     
                     <!-- Diário Section -->
-                    <div class="mb-8">
-                        <h4 class="font-semibold text-blue-700 mb-4 flex items-center text-lg">
-                            <i data-lucide="sun" class="w-5 h-5 mr-3"></i>
+                    <div class="mb-6 md:mb-8">
+                        <h4 class="font-semibold text-blue-700 mb-3 md:mb-4 flex items-center text-base md:text-lg">
+                            <i data-lucide="sun" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"></i>
                             📅 Pacotes Diários
                         </h4>
-                        <div class="grid grid-cols-1 gap-6" id="daily-packages-container">
-                            <div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl">
-                                <i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
-                                <p>Carregando pacotes diários...</p>
+                        <div class="grid grid-cols-1 gap-4 md:gap-6" id="daily-packages-container">
+                            <div class="text-center py-6 md:py-8 text-gray-500 bg-white/50 rounded-2xl">
+                                <i data-lucide="package" class="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 text-gray-400"></i>
+                                <p class="mobile-text">Carregando pacotes diários...</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Mensal Section -->
                     <div>
-                        <h4 class="font-semibold text-green-600 mb-4 flex items-center text-lg">
-                            <i data-lucide="calendar" class="w-5 h-5 mr-3"></i>
+                        <h4 class="font-semibold text-green-600 mb-3 md:mb-4 flex items-center text-base md:text-lg">
+                            <i data-lucide="calendar" class="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3"></i>
                             📊 Pacotes Mensais
                         </h4>
-                        <div class="grid grid-cols-1 gap-6" id="monthly-packages-container">
-                            <div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl">
-                                <i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i>
-                                <p>Carregando pacotes mensais...</p>
+                        <div class="grid grid-cols-1 gap-4 md:gap-6" id="monthly-packages-container">
+                            <div class="text-center py-6 md:py-8 text-gray-500 bg-white/50 rounded-2xl">
+                                <i data-lucide="package" class="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 text-gray-400"></i>
+                                <p class="mobile-text">Carregando pacotes mensais...</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Payment Methods -->
-                <div class="bg-white rounded-3xl p-6 shadow-2xl border border-blue-100 mb-6">
-                    <h4 class="font-bold text-gray-900 mb-4 flex items-center text-lg">
-                        <i data-lucide="credit-card" class="w-6 h-6 mr-3 text-blue-600"></i>
+                <div class="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-2xl border border-blue-100 mb-4 md:mb-6 slide-in">
+                    <h4 class="font-bold text-gray-900 mb-3 md:mb-4 flex items-center text-base md:text-lg">
+                        <i data-lucide="credit-card" class="w-5 h-5 md:w-6 md:h-6 mr-2 md:mr-3 text-blue-600"></i>
                         💳 Formas de Pagamento
                     </h4>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-4 text-center shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer">
-                            <div class="font-bold text-white text-lg">M-Pesa</div>
-                            <div class="text-green-100 text-sm">Pagamento móvel</div>
+                    <div class="grid grid-cols-2 gap-3 md:gap-4">
+                        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl md:rounded-2xl p-3 md:p-4 text-center shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer">
+                            <div class="font-bold text-white text-base md:text-lg">M-Pesa</div>
+                            <div class="text-green-100 text-xs md:text-sm">Pagamento móvel</div>
                         </div>
-                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-4 text-center shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer">
-                            <div class="font-bold text-white text-lg">e-Mola</div>
-                            <div class="text-blue-100 text-sm">Carteira digital</div>
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl md:rounded-2xl p-3 md:p-4 text-center shadow-lg transform hover:-translate-y-1 transition-all cursor-pointer">
+                            <div class="font-bold text-white text-base md:text-lg">e-Mola</div>
+                            <div class="text-blue-100 text-xs md:text-sm">Carteira digital</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Bottom Navigation -->
-            <div class="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-blue-200 px-6 py-4 shadow-2xl rounded-t-3xl">
+            <div class="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-blue-200 px-4 md:px-6 py-3 md:py-4 shadow-2xl rounded-t-3xl">
                 <div class="flex justify-around">
                     <button class="flex flex-col items-center text-blue-600 font-semibold">
-                        <i data-lucide="package" class="w-7 h-7 mb-2"></i>
-                        <span class="text-sm">Pacotes</span>
+                        <i data-lucide="package" class="w-5 h-5 md:w-7 md:h-7 mb-1 md:mb-2"></i>
+                        <span class="text-xs md:text-sm">Pacotes</span>
                     </button>
                     <button onclick="openSupport()" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors">
-                        <i data-lucide="message-circle" class="w-7 h-7 mb-2"></i>
-                        <span class="text-sm">Suporte</span>
+                        <i data-lucide="message-circle" class="w-5 h-5 md:w-7 md:h-7 mb-1 md:mb-2"></i>
+                        <span class="text-xs md:text-sm">Suporte</span>
                     </button>
                 </div>
             </div>
@@ -230,12 +246,12 @@
     <script>
         // Firebase Configuration
         const firebaseConfig = {
-            apiKey: "-AIzaSyCdjfx7WR38y5JuKJi7iPa9BngZkjrLH4Q",
-            authDomain: "vpnm-27bdc.firebaseapp.com",
-            projectId: "vpnm-27bdc",
-            storageBucket: "vpnm-27bdc.appspot.com",
-            messagingSenderId: "549652754327",
-            appId: "1:549652754327:web:606bc13e134a5034579ed2"
+            apiKey: "AIzaSyDbL_FwGrLPbl-1V29HTbpunlyum2xqRy0",
+            authDomain: "chat-c8591.firebaseapp.com",
+            projectId: "chat-c8591",
+            storageBucket: "chat-c8591.firebasestorage.app",
+            messagingSenderId: "580871045725",
+            appId: "1:580871045725:web:a9495097d38d4f7fe283b4"
         };
 
         // Initialize Firebase
@@ -246,9 +262,14 @@
         let currentUser = null;
         const YOUR_WHATSAPP_NUMBER = "258855361571";
 
+        // Inicializar a aplicação
         function initApp() {
+            console.log("Inicializando aplicação MeGA...");
             lucide.createIcons();
+            
+            // Verificar estado de autenticação
             auth.onAuthStateChanged((user) => {
+                console.log("Estado de autenticação alterado:", user ? "Usuário logado" : "Usuário não logado");
                 if (user) {
                     currentUser = user;
                     loadUserData();
@@ -260,22 +281,26 @@
         }
 
         function showAuthScreen() {
+            console.log("Mostrando tela de autenticação");
             document.getElementById('auth-screen').classList.remove('hidden');
             document.getElementById('main-app').classList.add('hidden');
             showLogin();
         }
 
         function showLogin() {
+            console.log("Mostrando formulário de login");
             document.getElementById('register-form').classList.add('hidden');
-            document.querySelector('#auth-screen > div > div:last-child').classList.remove('hidden');
+            document.getElementById('login-form').classList.remove('hidden');
         }
 
         function showRegister() {
-            document.querySelector('#auth-screen > div > div:last-child').classList.add('hidden');
+            console.log("Mostrando formulário de registro");
+            document.getElementById('login-form').classList.add('hidden');
             document.getElementById('register-form').classList.remove('hidden');
         }
 
         function showMainApp() {
+            console.log("Mostrando aplicação principal");
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             updateUserInfo();
@@ -283,6 +308,7 @@
         }
 
         function hideLoading() {
+            console.log("Escondendo loading");
             document.getElementById('loading').classList.add('hidden');
         }
 
@@ -290,7 +316,7 @@
             const button = document.getElementById(buttonId);
             if (isLoading) {
                 button.classList.add('btn-loading');
-                button.innerHTML = '<div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>';
+                button.innerHTML = '<div class="w-5 h-5 md:w-6 md:h-6 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>';
             } else {
                 button.classList.remove('btn-loading');
                 if (buttonId === 'login-btn') {
@@ -302,7 +328,8 @@
         }
 
         async function login() {
-            const email = document.getElementById('login-email').value;
+            console.log("Iniciando processo de login");
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
             
             if (!email || !password) {
@@ -313,18 +340,30 @@
             setButtonLoading('login-btn', true);
 
             try {
-                await auth.signInWithEmailAndPassword(email, password);
+                console.log("Tentando login com Firebase Auth");
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                console.log("Login realizado com sucesso:", userCredential.user.uid);
+                
+                // Aguardar um pouco para garantir que o estado seja atualizado
+                setTimeout(() => {
+                    if (auth.currentUser) {
+                        console.log("Usuário autenticado, carregando dados...");
+                    }
+                }, 1000);
+                
             } catch (error) {
+                console.error("Erro no login:", error);
                 setButtonLoading('login-btn', false);
                 alert('Erro ao entrar: ' + error.message);
             }
         }
 
         async function register() {
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
+            console.log("Iniciando processo de registro");
+            const name = document.getElementById('register-name').value.trim();
+            const email = document.getElementById('register-email').value.trim();
             const password = document.getElementById('register-password').value;
-            const phone = document.getElementById('register-phone').value;
+            const phone = document.getElementById('register-phone').value.trim();
             const province = document.getElementById('register-province').value;
             
             if (!name || !email || !password || !phone || !province) {
@@ -340,7 +379,10 @@
             setButtonLoading('register-btn', true);
 
             try {
+                console.log("Criando usuário no Firebase Auth");
                 const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                console.log("Usuário criado, salvando dados no Firestore");
+                
                 await db.collection('users').doc(userCredential.user.uid).set({
                     name: name,
                     email: email,
@@ -350,47 +392,79 @@
                     role: 'user',
                     blocked: false
                 });
+                
+                console.log("Registro concluído com sucesso");
+                // O onAuthStateChanged vai automaticamente chamar showMainApp()
+                
             } catch (error) {
+                console.error("Erro no registro:", error);
                 setButtonLoading('register-btn', false);
                 alert('Erro ao criar conta: ' + error.message);
             }
         }
 
         async function loadUserData() {
+            console.log("Carregando dados do usuário para:", currentUser.uid);
             try {
                 const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
                 if (userDoc.exists) {
                     const userData = userDoc.data();
+                    console.log("Dados do usuário encontrados:", userData);
                     
                     if (userData.blocked) {
+                        console.log("Usuário bloqueado, fazendo logout");
                         await auth.signOut();
                         alert('Sua conta foi bloqueada. Entre em contato com o suporte.');
                         return;
                     }
                     
                     currentUser.data = userData;
+                    console.log("Dados carregados, mostrando aplicação principal");
                     showMainApp();
                 } else {
-                    await auth.signOut();
-                    alert('Dados do usuário não encontrados. Por favor, faça login novamente.');
+                    console.log("Dados do usuário não encontrados no Firestore");
+                    // Criar dados básicos do usuário se não existirem
+                    await db.collection('users').doc(currentUser.uid).set({
+                        name: currentUser.email.split('@')[0],
+                        email: currentUser.email,
+                        phone: '+258840000000',
+                        province: 'Maputo Cidade',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        role: 'user',
+                        blocked: false
+                    });
+                    
+                    console.log("Dados básicos criados, recarregando...");
+                    // Recarregar dados
+                    loadUserData();
                 }
             } catch (error) {
                 console.error('Erro ao carregar dados do usuário:', error);
-                await auth.signOut();
+                // Mesmo com erro, mostrar a aplicação principal
+                console.log("Mostrando aplicação principal mesmo com erro nos dados");
+                showMainApp();
             }
         }
 
         function updateUserInfo() {
+            console.log("Atualizando informações do usuário na interface");
             if (currentUser && currentUser.data) {
                 document.getElementById('welcome-name').textContent = `Olá, ${currentUser.data.name.split(' ')[0]}!`;
                 document.getElementById('user-province').textContent = currentUser.data.province;
                 document.getElementById('user-phone').textContent = currentUser.data.phone;
+            } else {
+                document.getElementById('welcome-name').textContent = `Olá, ${currentUser.email.split('@')[0]}!`;
+                document.getElementById('user-province').textContent = 'Maputo Cidade';
+                document.getElementById('user-phone').textContent = '+258840000000';
             }
         }
 
         function loadPackages() {
+            console.log("Carregando pacotes do Firestore");
             db.collection('packages').where('active', '==', true)
                 .onSnapshot((snapshot) => {
+                    console.log("Pacotes recebidos:", snapshot.size);
                     const dailyContainer = document.getElementById('daily-packages-container');
                     const monthlyContainer = document.getElementById('monthly-packages-container');
                     
@@ -398,8 +472,9 @@
                     monthlyContainer.innerHTML = '';
                     
                     if (snapshot.empty) {
-                        dailyContainer.innerHTML = '<div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i><p>Nenhum pacote diário disponível</p></div>';
-                        monthlyContainer.innerHTML = '<div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i><p>Nenhum pacote mensal disponível</p></div>';
+                        console.log("Nenhum pacote ativo encontrado");
+                        dailyContainer.innerHTML = '<div class="text-center py-6 md:py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 text-gray-400"></i><p class="mobile-text">Nenhum pacote diário disponível</p></div>';
+                        monthlyContainer.innerHTML = '<div class="text-center py-6 md:py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 text-gray-400"></i><p class="mobile-text">Nenhum pacote mensal disponível</p></div>';
                         return;
                     }
                     
@@ -408,19 +483,20 @@
                     
                     snapshot.forEach((doc) => {
                         const pkg = doc.data();
+                        console.log("Processando pacote:", pkg);
                         const packageHTML = `
-                            <div class="bg-white rounded-3xl p-6 shadow-2xl border border-gray-200 card-hover ${pkg.category === 'Diário' ? 'daily-card' : 'monthly-card'}">
-                                <div class="text-center mb-6">
-                                    <div class="text-4xl mb-3">${pkg.icon || '📦'}</div>
-                                    <h3 class="font-bold text-gray-900 text-xl">${pkg.category}: ${pkg.data}</h3>
-                                    <p class="text-gray-600">${pkg.period}</p>
+                            <div class="bg-white rounded-2xl md:rounded-3xl p-4 md:p-6 shadow-2xl border border-gray-200 card-hover ${pkg.category === 'Diário' ? 'daily-card' : 'monthly-card'}">
+                                <div class="text-center mb-4 md:mb-6">
+                                    <div class="text-3xl md:text-4xl mb-2 md:mb-3">${pkg.icon || '📦'}</div>
+                                    <h3 class="font-bold text-gray-900 text-lg md:text-xl">${pkg.category}: ${pkg.data}</h3>
+                                    <p class="text-gray-600 mobile-text">${pkg.period}</p>
                                 </div>
-                                <div class="text-center mb-6">
-                                    <span class="text-3xl font-bold text-gray-900">${pkg.price}</span>
-                                    <span class="text-gray-600 ml-2">MT</span>
+                                <div class="text-center mb-4 md:mb-6">
+                                    <span class="text-2xl md:text-3xl font-bold text-gray-900">${pkg.price}</span>
+                                    <span class="text-gray-600 ml-1 md:ml-2">MT</span>
                                 </div>
                                 <button onclick="buyPackage('${doc.id}', '${pkg.category}', ${pkg.price}, '${pkg.data}', '${pkg.period}')" 
-                                    class="w-full gradient-bg text-white py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                    class="w-full gradient-bg text-white py-3 md:py-4 px-4 rounded-2xl hover:opacity-90 transition-all font-semibold text-base md:text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 mobile-btn">
                                     🛒 Comprar Agora
                                 </button>
                             </div>
@@ -436,31 +512,37 @@
                     });
                     
                     if (!hasDaily) {
-                        dailyContainer.innerHTML = '<div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i><p>Nenhum pacote diário disponível</p></div>';
+                        dailyContainer.innerHTML = '<div class="text-center py-6 md:py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 text-gray-400"></i><p class="mobile-text">Nenhum pacote diário disponível</p></div>';
                     }
                     
                     if (!hasMonthly) {
-                        monthlyContainer.innerHTML = '<div class="text-center py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-12 h-12 mx-auto mb-3 text-gray-400"></i><p>Nenhum pacote mensal disponível</p></div>';
+                        monthlyContainer.innerHTML = '<div class="text-center py-6 md:py-8 text-gray-500 bg-white/50 rounded-2xl"><i data-lucide="package" class="w-8 h-8 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 text-gray-400"></i><p class="mobile-text">Nenhum pacote mensal disponível</p></div>';
                     }
                     
+                    // Recriar ícones Lucide para os novos elementos
                     lucide.createIcons();
+                    console.log("Pacotes carregados com sucesso");
                 }, (error) => {
                     console.error('Erro ao carregar pacotes:', error);
+                    alert('Erro ao carregar pacotes. Tente novamente.');
                 });
         }
 
         async function buyPackage(packageId, packageCategory, packagePrice, packageData, packagePeriod) {
+            console.log("Comprando pacote:", packageId, packageCategory, packagePrice);
             if (!currentUser || !currentUser.data) {
                 alert('Por favor, faça login primeiro');
                 return;
             }
             
             try {
+                // Atualizar contador de cliques
                 await db.collection('packages').doc(packageId).update({
                     clicks: firebase.firestore.FieldValue.increment(1),
                     lastClicked: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
+                // Criar mensagem para WhatsApp
                 const message = `🛒 *COMPRA NO MeGA*%0A%0A` +
                                `📦 *Pacote:* ${packageCategory} - ${packageData}%0A` +
                                `⏰ *Validade:* ${packagePeriod}%0A` +
@@ -470,8 +552,11 @@
                                `📍 *Província:* ${currentUser.data.province}%0A%0A` +
                                `✅ *Confirmar compra*`;
                 
+                // Abrir WhatsApp
                 const whatsappUrl = `https://wa.me/${YOUR_WHATSAPP_NUMBER}?text=${message}`;
                 window.open(whatsappUrl, '_blank');
+                
+                console.log("Compra iniciada via WhatsApp");
                 
             } catch (error) {
                 console.error('Erro ao registrar clique:', error);
@@ -480,6 +565,7 @@
         }
 
         function openSupport() {
+            console.log("Abrindo suporte");
             if (!currentUser || !currentUser.data) {
                 alert('Por favor, faça login primeiro');
                 return;
@@ -496,14 +582,28 @@
         }
 
         async function logout() {
-            try {
-                await auth.signOut();
-            } catch (error) {
-                alert('Erro ao sair: ' + error.message);
+            console.log("Fazendo logout");
+            if (confirm('Tem certeza que deseja sair?')) {
+                try {
+                    await auth.signOut();
+                    console.log("Logout realizado com sucesso");
+                } catch (error) {
+                    console.error("Erro no logout:", error);
+                    alert('Erro ao sair: ' + error.message);
+                }
             }
         }
 
-        window.addEventListener('load', initApp);
+        // Inicializar a aplicação quando a página carregar
+        window.addEventListener('load', function() {
+            console.log("Página carregada, inicializando app...");
+            initApp();
+        });
+
+        // Prevenir comportamento padrão de formulário
+        document.addEventListener('submit', function(e) {
+            e.preventDefault();
+        });
     </script>
 </body>
 </html>
